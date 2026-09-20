@@ -360,44 +360,51 @@ address { font-style: normal; }
 }
 .hero-trust svg { width: 17px; height: 17px; color: var(--gold); flex: none; }
 
-/* Hero quote card */
-.quote-card {
-  background: var(--white); color: var(--slate-d);
-  border-radius: var(--r-lg); padding: clamp(1.4rem, 1rem + 1.4vw, 2rem);
+/* Hero call card — calling is the only conversion path, so the number itself
+   is the hero element rather than a form field. */
+.call-card {
+  background: var(--white); color: var(--slate-d); text-align: center;
+  border-radius: var(--r-lg); padding: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
   box-shadow: var(--sh-3);
 }
-.quote-card h2 { font-size: 1.32rem; margin-bottom: .3rem; }
-.quote-card .qc-sub { font-size: .9rem; color: var(--slate); margin-bottom: 1.2rem; }
-.field { margin-bottom: .9rem; }
-.field label {
-  display: block; font-size: .82rem; font-weight: 700;
-  color: var(--ink); margin-bottom: .35rem;
-}
-.field input, .field select, .field textarea {
-  width: 100%; padding: .78rem .9rem; font: inherit; font-size: .95rem;
-  color: var(--ink); background: var(--paper);
-  border: 1.5px solid var(--line); border-radius: var(--r-sm);
-  transition: border-color .15s var(--ease), background-color .15s var(--ease);
-  appearance: none;
-}
-.field textarea { min-height: 96px; resize: vertical; }
-.field select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6479' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right .8rem center; background-size: 17px;
-  padding-right: 2.4rem;
-}
-.field input:focus, .field select:focus, .field textarea:focus {
-  outline: none; border-color: var(--gold); background: var(--white);
-  box-shadow: 0 0 0 3px rgba(245, 179, 1, .18);
-}
-.field-row { display: grid; gap: .9rem; }
-@media (min-width: 520px) { .field-row { grid-template-columns: 1fr 1fr; } }
+.call-card .eyebrow { justify-content: center; }
+.call-card .eyebrow::before { display: none; }
+.call-card h2 { font-size: clamp(1.22rem, 1.08rem + .6vw, 1.5rem); margin-bottom: .5rem; }
+.call-card > p { font-size: .94rem; color: var(--slate); margin-bottom: 1.3rem; }
 
-.form-note { font-size: .8rem; color: var(--slate); margin-top: .9rem; text-align: center; }
-.form-status { font-size: .9rem; font-weight: 600; margin-top: .9rem; padding: .7rem .9rem; border-radius: var(--r-sm); }
-.form-status[data-state="ok"]   { background: var(--green-b); color: var(--green); }
-.form-status[data-state="err"]  { background: var(--red-b);   color: var(--red); }
-.form-status:empty { display: none; }
+.call-number {
+  display: block; margin-bottom: 1rem;
+  font-size: clamp(1.85rem, 1.3rem + 2.4vw, 2.6rem); font-weight: 800;
+  line-height: 1.05; letter-spacing: -.035em; white-space: nowrap;
+  color: var(--ink); text-decoration: none; font-variant-numeric: tabular-nums;
+  transition: color .18s var(--ease);
+}
+.call-number:hover { color: var(--gold-deep); }
+
+/* The open/closed pill is styled for dark backgrounds; restate it for the
+   light card, where it sits right beside the call button. */
+.call-card .badge-open {
+  background: var(--paper); border-color: var(--line); color: var(--slate-d);
+  margin-bottom: 1.4rem;
+}
+.call-card .badge-open.is-open   { background: var(--green-b); border-color: rgba(18,161,80,.24); color: #0d7a3d; }
+.call-card .badge-open.is-closed { background: #fff4ed; border-color: #ffd9c4; color: #b54708; }
+
+.call-points { list-style: none; padding: 0; margin: 0 0 1.5rem; text-align: left; }
+.call-points li {
+  position: relative; padding-left: 1.9rem; margin-bottom: .7rem;
+  font-size: .94rem; color: var(--slate-d);
+}
+.call-points li:last-child { margin-bottom: 0; }
+.call-points li::before {
+  content: ""; position: absolute; left: 0; top: .2rem;
+  width: 19px; height: 19px; border-radius: 50%;
+  background: var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0f1a' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/11px no-repeat;
+}
+
+.call-card .btn + .btn { margin-top: .6rem; }
+.call-note { font-size: .84rem; color: var(--slate); margin-top: 1.1rem; }
+.call-note strong { color: var(--ink); }
 
 /* --------------------------------------------------------------------------
    7. Marquee of supported brands
@@ -747,7 +754,7 @@ table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; fo
    20. Print
    -------------------------------------------------------------------------- */
 @media print {
-  .header, .topbar, .callbar, .nav-toggle, .cta-band, .map-frame, .quote-card { display: none !important; }
+  .header, .topbar, .callbar, .nav-toggle, .cta-band, .map-frame { display: none !important; }
   body { color: #000; background: #fff; }
   .hero, .page-head, .section--ink, .footer { background: #fff !important; color: #000 !important; }
   .hero h1, .page-head h1, .footer h3 { color: #000 !important; }
@@ -761,14 +768,8 @@ table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; fo
    keep that visit fast, tappable and zoom-free.
    -------------------------------------------------------------------------- */
 
-/* iOS Safari auto-zooms any focused input whose font-size is under 16px,
-   which yanks the layout sideways mid-form. Force 16px on touch widths. */
-@media (max-width: 991px) {
-  .field input, .field select, .field textarea { font-size: 16px; }
-}
-
 /* Kill the grey flash on tap; we supply our own :active states. */
-a, button, summary, .btn, input, select, textarea {
+a, button, summary, .btn {
   -webkit-tap-highlight-color: rgba(245, 179, 1, .18);
 }
 

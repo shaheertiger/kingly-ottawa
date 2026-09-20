@@ -217,61 +217,7 @@
   }
 
   /* ------------------------------------------------------------------
-     6. Quote / contact form
-     Progressive enhancement: the form works as a normal POST without JS.
-     With JS we submit in the background and keep the visitor on the page.
-     ------------------------------------------------------------------ */
-  function initForms() {
-    $$("form[data-ajax]").forEach(function (form) {
-      var status = $(".form-status", form);
-      var button = $("button[type=submit]", form);
-
-      form.addEventListener("submit", function (e) {
-        var action = form.getAttribute("action") || "";
-
-        // Not configured yet? Don't pretend it sent — send them to the phone.
-        if (!action || action.indexOf("YOUR_FORM_ID") !== -1) {
-          e.preventDefault();
-          if (status) {
-            status.setAttribute("data-state", "err");
-            status.textContent = "Online form isn't connected yet — please call (613) 206-6060 and we'll sort you out right away.";
-          }
-          return;
-        }
-
-        e.preventDefault();
-        var original = button ? button.innerHTML : "";
-        if (button) { button.disabled = true; button.textContent = "Sending…"; }
-        if (status) { status.removeAttribute("data-state"); status.textContent = ""; }
-
-        fetch(action, {
-          method: "POST",
-          body: new FormData(form),
-          headers: { Accept: "application/json" }
-        })
-          .then(function (res) {
-            if (!res.ok) throw new Error("Bad response");
-            form.reset();
-            if (status) {
-              status.setAttribute("data-state", "ok");
-              status.textContent = "Thanks! We’ve got your request and will text or call you back shortly.";
-            }
-          })
-          .catch(function () {
-            if (status) {
-              status.setAttribute("data-state", "err");
-              status.textContent = "Couldn’t send that — please call (613) 206-6060 instead.";
-            }
-          })
-          .then(function () {
-            if (button) { button.disabled = false; button.innerHTML = original; }
-          });
-      });
-    });
-  }
-
-  /* ------------------------------------------------------------------
-     7. Footer year
+     6. Footer year
      ------------------------------------------------------------------ */
   function initYear() {
     $$("[data-year]").forEach(function (el) {
@@ -288,7 +234,6 @@
     initHours();
     initReveal();
     initCallBar();
-    initForms();
     initYear();
   }
 

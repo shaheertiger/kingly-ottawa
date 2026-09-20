@@ -1,6 +1,6 @@
-# Kingly Ottawa — website
+# King Mobile + Laptop Experts — website
 
-Marketing site for **Kingly Ottawa**, a phone, tablet and laptop repair shop at
+Marketing site for **King Mobile + Laptop Experts**, a phone, tablet and laptop repair shop at
 308 Rideau St, Unit A, Ottawa, ON K1N 5Y4 · (613) 206-6060.
 
 Static HTML, CSS and vanilla JavaScript. No build step, no framework, no npm
@@ -17,21 +17,20 @@ Work through this list first.
 |---|------|-------|----------------|
 | 1 | **Repair prices** | `services.html` (all `$` figures) and the `card-price` spans in `index.html` | These are illustrative numbers, **not yours**. Publishing them unchanged means customers arrive expecting a price you never set. |
 | 2 | **Opening hours** | Three places, see [Opening hours](#opening-hours) below | Wrong hours send people to a closed shop and hurt your Google ranking. |
-| 3 | **Domain name** | Every `https://kinglyottawa.com` in all 5 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
-| 4 | **Contact form endpoint** | `YOUR_FORM_ID` in `index.html` and `contact.html` | Until set, the form tells visitors to phone instead of silently losing their message. |
-| 5 | **Google review links** | `index.html`, the two links in the `#reviews` section | Currently a Maps *search*; swap for your Business Profile's direct review URL. |
-| 6 | **Map coordinates** | `geo` block in `index.html` JSON-LD, `geo.position` in `contact.html` | Approximate (45.4287, −75.6857). Verify against your real pin. |
-| 7 | **Warranty claims** | "90 days", "no fix no fee", "we beat written quotes" | These appear across the site as commitments. Keep only what you actually offer. |
+| 3 | **Domain name** | Every `https://kingmobileexperts.ca` in all 5 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
+| 4 | **Google review links** | `index.html`, the two links in the `#reviews` section | Currently a Maps *search*; swap for your Business Profile's direct review URL. |
+| 5 | **Map coordinates** | `geo` block in `index.html` JSON-LD, `geo.position` in `contact.html` | Approximate (45.4287, −75.6857). Verify against your real pin. |
+| 6 | **Warranty claims** | "90 days", "no fix no fee", "we beat written quotes" | These appear across the site as commitments. Keep only what you actually offer. |
 
 ### Quick find-and-replace
 
 ```bash
 # 3. Swap the domain everywhere (use your real one)
-grep -rl 'kinglyottawa.com' . --include='*.html' --include='*.txt' --include='*.xml' \
+grep -rl 'kingmobileexperts.ca' . --include='*.html' --include='*.txt' --include='*.xml' \
   | xargs sed -i 's|kinglyottawa\.com|yourdomain.ca|g'
 
 # Confirm nothing was missed
-grep -rn 'kinglyottawa.com\|YOUR_FORM_ID' . --include='*.html' --include='*.txt' --include='*.xml'
+grep -rn 'kingmobileexperts.ca' . --include='*.html' --include='*.txt' --include='*.xml'
 ```
 
 ---
@@ -152,30 +151,40 @@ Most visitors arrive on a phone, often a damaged one, on mobile data. So:
   highest-converting element on a local-services site.
 - **Click-to-call everywhere.** Every phone number is a `tel:` link, and they
   all point at the same number so Google reads one consistent NAP.
-- **16px form inputs** on touch widths, because iOS Safari auto-zooms anything
-  smaller the moment it's focused and shoves the layout sideways.
+- **One conversion path — the phone.** No forms to fill on a device that may
+  barely work; every CTA dials.
 - **48px minimum touch targets** under `@media (pointer: coarse)`.
 - **No horizontal overflow** at any width — verified with a headless browser at
   390px and 1440px.
 - **Safe-area insets** honoured so nothing hides under a notch or home bar.
-- **~35 KB of CSS + JS total**, no framework, no jQuery, no layout shift.
+- **~45 KB of CSS + JS total**, no framework, no jQuery, no layout shift.
 
 ---
 
-## Contact form
+## There is no contact form — by design
 
-Both forms post to [Formspree](https://formspree.io) (free tier is fine for a
-shop this size). Create a form, then replace `YOUR_FORM_ID` in `index.html`
-and `contact.html` with your real endpoint.
+Every call to action on this site is a phone call. There are no enquiry forms,
+so there's no inbox to watch, no spam to wade through, and no customer left
+wondering whether their message arrived.
 
-Until you do, the form deliberately **refuses to pretend it sent** — it shows
-an error pointing at the phone number instead of silently dropping enquiries.
+That suits this business: someone with a cracked screen wants a price now, and
+a two-minute call closes the job that an email thread wouldn't. It also means
+one fewer thing to configure, and one fewer third party handling your
+customers' details.
 
-Prefer something else? Any endpoint that accepts a `POST` of form data and
-returns 2xx works — Netlify Forms, Basin, Web3Forms, your own handler. Just
-swap the `action` attribute.
+The call-to-action surfaces are:
 
----
+- The **call card** in the hero on the home page, and the matching panel on
+  `/contact` — both lead with the number at display size.
+- The **sticky call bar** on every page below 992px.
+- The header button, and a call CTA closing every major section.
+- Every phone number on the site is a `tel:` link, so one tap dials.
+
+**If you ever do want a form back**, add it to the call card in `index.html`
+and `contact.html`, restore the `.field` / `.form-status` styles (see git
+history for `assets/css/styles.css`), and extend the CSP in `vercel.json` —
+`form-action` is currently `'none'` and `connect-src` is `'self'`, so a form
+posting to a third party will be blocked until you allow its domain.
 
 ## SEO notes
 
@@ -203,7 +212,7 @@ For a shop like this, that profile drives more calls than the website will.
 
 ## Accessibility
 
-Skip link, landmark elements, labelled form fields, `aria-current` on the
+Skip link, landmark elements, `aria-current` on the
 active nav item, `aria-expanded` on the menu toggle, visible focus rings,
 keyboard-operable everything, `prefers-reduced-motion` respected, and text that
 meets WCAG AA contrast on both the light and dark sections.

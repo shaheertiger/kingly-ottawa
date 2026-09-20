@@ -1,5 +1,5 @@
-# Kingly Ottawa
+# King Mobile + Laptop Experts
 User-agent: *
 Allow: /
 
-Sitemap: https://kinglyottawa.com/sitemap.xml
+Sitemap: https://kingmobileexperts.ca/sitemap.xml
