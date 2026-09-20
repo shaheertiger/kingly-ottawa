@@ -17,10 +17,11 @@ Work through this list first.
 |---|------|-------|----------------|
 | 1 | **Repair prices** | `services.html` (all `$` figures) and the `card-price` spans in `index.html` | These are illustrative numbers, **not yours**. Publishing them unchanged means customers arrive expecting a price you never set. |
 | 2 | **Opening hours** | Three places, see [Opening hours](#opening-hours) below | Wrong hours send people to a closed shop and hurt your Google ranking. |
-| 3 | **Domain name** | Every `https://kingmobileexperts.ca` in all 5 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
-| 4 | **Google review links** | `index.html`, the two links in the `#reviews` section | Currently a Maps *search*; swap for your Business Profile's direct review URL. |
-| 5 | **Map coordinates** | `geo` block in `index.html` JSON-LD, `geo.position` in `contact.html` | Approximate (45.4287, −75.6857). Verify against your real pin. |
-| 6 | **Warranty claims** | "90 days", "no fix no fee", "we beat written quotes" | These appear across the site as commitments. Keep only what you actually offer. |
+| 3 | **Domain name** | Every `https://kingmobileexperts.ca` in all 6 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
+| 4 | **Google Ads conversion labels** | `CONVERSIONS` in `assets/js/gtag.js` | The tag is live but records **nothing** until you paste the labels. See [Google Ads tracking](#google-ads-tracking). |
+| 5 | **Google review links** | `index.html`, the two links in the `#reviews` section | Currently a Maps *search*; swap for your Business Profile's direct review URL. |
+| 6 | **Map coordinates** | `geo` block in `index.html` JSON-LD, `geo.position` in `contact.html` | Approximate (45.4287, −75.6857). Verify against your real pin. |
+| 7 | **Warranty claims** | "90 days", "no fix no fee", "we beat written quotes" | These appear across the site as commitments. Keep only what you actually offer. |
 
 ### Quick find-and-replace
 
@@ -124,6 +125,7 @@ python3 -m http.server 8000   # note: use /services.html paths with this one
 ├── services.html       Repairs + full price list  (/services)
 ├── buy-sell.html       Buy, sell & trade          (/buy-sell)
 ├── contact.html        Contact, hours, directions (/contact)
+├── privacy.html        Privacy & cookies notice     (/privacy)
 ├── 404.html            Not-found page (Vercel serves this automatically)
 ├── vercel.json         Routing, caching, security headers
 ├── robots.txt          Crawler rules + sitemap pointer
@@ -138,8 +140,8 @@ python3 -m http.server 8000   # note: use /services.html paths with this one
 
 Header and footer markup is duplicated across the five pages (the cost of
 having no build step). **If you change the nav or footer, change it in all
-five** — `index.html`, `services.html`, `buy-sell.html`, `contact.html`,
-`404.html`.
+six** — `index.html`, `services.html`, `buy-sell.html`, `contact.html`,
+`privacy.html`, `404.html`.
 
 ---
 
@@ -185,6 +187,103 @@ and `contact.html`, restore the `.field` / `.form-status` styles (see git
 history for `assets/css/styles.css`), and extend the CSP in `vercel.json` —
 `form-action` is currently `'none'` and `connect-src` is `'self'`, so a form
 posting to a third party will be blocked until you allow its domain.
+
+## Google Ads tracking
+
+The Google tag for **AW-17829939467** is installed in the `<head>` of every
+page. The dataLayer bootstrap and config live in `assets/js/gtag.js` rather
+than inline, so the Content-Security-Policy can stay at `script-src 'self'`
+with no `'unsafe-inline'` and no CSP hash to keep in sync.
+
+### ⚠️ It records nothing until you add conversion labels
+
+The tag loads and fires, but a conversion only reaches Google Ads once you
+paste the matching label. In Google Ads: **Goals → Conversions → New
+conversion action → Website**. Create one for phone calls and (optionally)
+one for directions, then copy each action's `send_to` value — it looks like
+`AW-17829939467/AbCdEfGhIjKlMnOpQrS` — into `CONVERSIONS` at the top of
+`assets/js/gtag.js`.
+
+Until you do, every click is still pushed to the dataLayer (so it shows up in
+Tag Assistant) and the browser console warns you the label is missing, but
+Google Ads receives nothing.
+
+### What gets tracked
+
+| Action | When it fires |
+|---|---|
+| `call` | Any `tel:` link is tapped — header, hero card, sticky bar, CTAs. Tagged with whether it came from the sticky bar or the page body. |
+| `directions` | Any Google Maps directions link is clicked. |
+
+### Enhanced conversions — on, but with nothing to feed it
+
+`allow_enhanced_conversions: true` is set, and the hashing hook is built and
+tested. **But enhanced conversions works by hashing first-party customer data
+— email, phone, name, address — and this site deliberately has no forms, so
+there is currently no such data to send.** The feature is wired and dormant.
+
+It starts paying off the moment you add somewhere a customer types their
+details (a booking form, a repair-status lookup, an email capture). At that
+point, call this before the conversion fires:
+
+```js
+kingTrack.setUserData({
+  email: "customer@example.com",
+  phone: "613 555 0123",
+  firstName: "Alex", lastName: "Chen",
+  city: "Ottawa", region: "ON", postalCode: "K1N 5Y4"
+});
+```
+
+Values are normalised (lowercased, phone to E.164, postal code stripped) and
+SHA-256 hashed **in the visitor's browser** by gtag — the raw details never
+leave the device. Only pass details a customer gave you for this purpose.
+
+### Call reporting — the one that actually suits this business
+
+Since the conversion here is a phone call, the higher-value Google Ads feature
+is **"Calls from a website"**: Google swaps the number on the site for a free
+forwarding number and attributes calls to ads automatically — no customer data
+needed. It's built in but **off by default**, because it changes the number
+visitors see. To turn it on, set up the conversion action in Google Ads, then
+in `assets/js/gtag.js` set `CALL_REPORTING.ENABLED = true` and paste its label.
+
+### If conversions stop showing up, check the CSP first
+
+The `Content-Security-Policy` in `vercel.json` is the most likely culprit — a
+blocked request fails silently in production. Open the browser console on the
+live site and look for CSP violation messages; they name the exact directive
+to extend. The policy currently allows `googletagmanager.com` to serve scripts
+and Google/DoubleClick domains to receive pixels and beacons.
+
+Adding another third-party tag later (GA4, Meta pixel, a chat widget) means
+adding its domain to `script-src`, and wherever it sends data to `connect-src`
+and `img-src`.
+
+### Consent mode (EEA/UK) — not implemented
+
+Google's setup screen suggests consent mode. It is **not** implemented here,
+deliberately: consent mode without a consent banner to drive it either changes
+nothing or silently breaks your tracking. Your customers walk into a shop on
+Rideau Street, so EEA traffic is effectively nil.
+
+If you ever advertise into the EEA or UK, you'd need a consent banner plus a
+`gtag('consent', 'default', {...})` call ahead of the config in
+`assets/js/gtag.js`. Quebec's Law 25 is worth a look too, given Gatineau is
+across the river.
+
+### Privacy page
+
+`/privacy` documents the tag, the cookies and the enhanced-conversions
+hashing, and is linked from every footer. **Google's Enhanced Conversions
+terms require you to disclose that you share data with Google and to have the
+right consents**, so don't delete that section while the feature is on.
+
+That page accurately describes what this website's code does. It deliberately
+says nothing about how you handle repair records, ID scans or customer details
+*in the shop* — only you know that. Add a section covering it, and have the
+page reviewed by someone qualified before relying on it. It is a starting
+point, not legal advice.
 
 ## SEO notes
 
