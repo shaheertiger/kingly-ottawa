@@ -104,6 +104,10 @@ ul, ol { margin: 0 0 1.1rem; padding-left: 1.2rem; }
 li { margin-bottom: .4rem; }
 
 strong { font-weight: 700; color: var(--ink); }
+
+/* <address> is italic by default, which reads as an aside rather than as the
+   shop's actual address. */
+address { font-style: normal; }
 /* On the dark sections that same ink is all but invisible, so emphasised
    text there has to flip to white. */
 .hero strong, .page-head strong, .section--ink strong,
@@ -670,7 +674,16 @@ table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; fo
 .footer li { margin-bottom: .6rem; }
 .footer a { color: #b0b9cd; text-decoration: none; transition: color .15s var(--ease); }
 .footer a:hover { color: var(--gold-bright); }
-.footer address { font-style: normal; line-height: 1.7; }
+.footer address { line-height: 1.7; }
+
+/* The shared .hours table assumes a light background; restate its colours
+   for the dark footer or the rows disappear into it. */
+.footer table.hours th { color: #8e99b4; font-weight: 500; }
+.footer table.hours td { color: #dfe4ee; }
+.footer table.hours th,
+.footer table.hours td { border-bottom-color: rgba(255, 255, 255, .08); }
+.footer table.hours tr.is-today th,
+.footer table.hours tr.is-today td { color: var(--gold-bright); }
 
 .footer-bottom {
   margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
