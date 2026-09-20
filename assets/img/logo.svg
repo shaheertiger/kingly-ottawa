@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Kingly Ottawa crown">
+  <rect width="64" height="64" rx="14" fill="#0b0f1a"/>
+  <g fill="#f5b301" transform="translate(11 16)">
+    <path d="M0 30.4 1.1 6.7 15.6 21.9 27.9 0 40.2 21.9 54.7 6.7 55.8 30.4Z"/>
+    <rect x="0" y="30.4" width="55.8" height="11.8" rx="3.8"/>
+    <circle cx="1.1" cy="6.7" r="4.2"/>
+    <circle cx="27.9" cy="0" r="4.7"/>
+    <circle cx="54.7" cy="6.7" r="4.2"/>
+  </g>
+</svg>
