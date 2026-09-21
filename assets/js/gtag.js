@@ -78,7 +78,7 @@
 
      There is nowhere on this site today that collects these details, so
      nothing calls this yet. Wire it up the moment you add a booking form,
-     a repair-status lookup or an email capture:
+     a valuation form or an email capture:
 
          kingTrack.setUserData({
            email: "customer@example.com",

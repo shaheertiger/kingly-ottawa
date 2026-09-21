@@ -11,6 +11,9 @@
   --gold:        #f5b301;
   --gold-bright: #ffc93c;
   --gold-deep:   #c98f00;
+  /* --gold-deep is too light for small text (~2.7:1 on white). This is
+     the gold used for TEXT on light backgrounds: 5.4:1 on white. */
+  --gold-text:   #8a6200;
   --ink:         #0b0f1a;
   --ink-2:       #131a2b;
   --ink-3:       #1c2540;
@@ -136,6 +139,11 @@ address { font-style: normal; }
 .section--tint { background: var(--paper); }
 .section--ink { background: var(--ink); color: #c3cad9; }
 .section--ink h2, .section--ink h3 { color: var(--white); }
+/* ...except inside a white card sitting on that dark section, where white
+   headings would be invisible. */
+.section--ink .card h2,
+.section--ink .card h3 { color: var(--ink); }
+.section--ink .card p  { color: var(--slate); }
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -158,7 +166,7 @@ address { font-style: normal; }
 .eyebrow {
   display: inline-flex; align-items: center; gap: .5rem;
   font-size: .76rem; font-weight: 800; letter-spacing: .13em;
-  text-transform: uppercase; color: var(--gold-deep);
+  text-transform: uppercase; color: var(--gold-text);
   margin-bottom: .85rem;
 }
 .eyebrow::before {
@@ -166,7 +174,16 @@ address { font-style: normal; }
   background: linear-gradient(90deg, var(--gold), transparent);
 }
 .sec-head--center .eyebrow::before { display: none; }
-.section--ink .eyebrow { color: var(--gold-bright); }
+.section--ink .eyebrow,
+.hero .eyebrow,
+.page-head .eyebrow,
+.cta-band .eyebrow { color: var(--gold-bright); }
+/* ...but a LIGHT card sitting inside one of those dark sections needs the
+   dark gold back, or the eyebrow goes bright-on-white. */
+.hero .call-card .eyebrow,
+.page-head .call-card .eyebrow,
+.section--ink .card .eyebrow,
+.cta-band .card .eyebrow { color: var(--gold-text); }
 
 /* --------------------------------------------------------------------------
    4. Buttons
@@ -248,7 +265,7 @@ address { font-style: normal; }
 .brand-name {
   font-size: 1.22rem; font-weight: 800; color: var(--ink); letter-spacing: -.025em;
 }
-.brand-name em { font-style: normal; color: var(--gold-deep); }
+.brand-name em { font-style: normal; color: var(--gold-text); }
 .brand-sub {
   font-size: .62rem; font-weight: 700; letter-spacing: .15em;
   text-transform: uppercase; color: var(--slate);
@@ -261,7 +278,7 @@ address { font-style: normal; }
   text-decoration: none; transition: color .15s var(--ease), background-color .15s var(--ease);
 }
 .nav-links a:hover { color: var(--ink); background: var(--paper); }
-.nav-links a[aria-current="page"] { color: var(--gold-deep); background: rgba(245, 179, 1, .1); }
+.nav-links a[aria-current="page"] { color: var(--gold-text); background: rgba(245, 179, 1, .1); }
 
 .nav-cta { display: none; }
 
@@ -285,7 +302,7 @@ address { font-style: normal; }
   display: block; padding: .85rem .2rem; font-size: 1.05rem; font-weight: 600;
   color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line);
 }
-.mobile-menu a.m-link[aria-current="page"] { color: var(--gold-deep); }
+.mobile-menu a.m-link[aria-current="page"] { color: var(--gold-text); }
 .mobile-menu .btn { margin-top: 1.1rem; }
 
 @media (min-width: 992px) {
@@ -379,7 +396,7 @@ address { font-style: normal; }
   color: var(--ink); text-decoration: none; font-variant-numeric: tabular-nums;
   transition: color .18s var(--ease);
 }
-.call-number:hover { color: var(--gold-deep); }
+.call-number:hover { color: var(--gold-text); }
 
 /* The open/closed pill is styled for dark backgrounds; restate it for the
    light card, where it sits right beside the call button. */
@@ -464,7 +481,7 @@ address { font-style: normal; }
 
 .card-link {
   display: inline-flex; align-items: center; gap: .35rem;
-  font-size: .9rem; font-weight: 700; color: var(--gold-deep); text-decoration: none;
+  font-size: .9rem; font-weight: 700; color: var(--gold-text); text-decoration: none;
 }
 .card-link svg { width: 16px; height: 16px; transition: transform .18s var(--ease); }
 .card--link:hover .card-link svg { transform: translateX(3px); }
@@ -555,7 +572,7 @@ table.prices td.turnaround { color: var(--slate); white-space: nowrap; }
   display: block; font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem); font-weight: 800;
   color: var(--ink); letter-spacing: -.03em; line-height: 1;
 }
-.stat-num .unit { color: var(--gold-deep); }
+.stat-num .unit { color: var(--gold-text); }
 .stat-label { font-size: .84rem; font-weight: 600; color: var(--slate); margin-top: .45rem; display: block; }
 
 /* --------------------------------------------------------------------------
@@ -633,14 +650,14 @@ table.prices td.turnaround { color: var(--slate); white-space: nowrap; }
 }
 .info-list .v { font-size: 1.02rem; font-weight: 700; color: var(--ink); line-height: 1.4; }
 .info-list .v a { text-decoration: none; }
-.info-list .v a:hover { color: var(--gold-deep); }
+.info-list .v a:hover { color: var(--gold-text); }
 
 table.hours { width: 100%; border-collapse: collapse; font-size: .95rem; }
 table.hours th, table.hours td { padding: .55rem 0; border-bottom: 1px solid var(--line); text-align: left; }
 table.hours th { font-weight: 600; color: var(--slate-d); }
 table.hours td { text-align: right; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
 table.hours tr:last-child th, table.hours tr:last-child td { border-bottom: 0; }
-table.hours tr.is-today th, table.hours tr.is-today td { color: var(--gold-deep); }
+table.hours tr.is-today th, table.hours tr.is-today td { color: var(--gold-text); }
 table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; font-weight: 800; letter-spacing: .06em; }
 
 /* --------------------------------------------------------------------------
@@ -675,7 +692,7 @@ table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; fo
   color: var(--white); margin-bottom: 1.1rem;
 }
 .footer .brand-name { color: var(--white); }
-.footer .brand-sub { color: #6c7794; }
+.footer .brand-sub { color: #7b85a6; }
 .footer p { color: #8e99b4; }
 .footer ul { list-style: none; padding: 0; margin: 0; }
 .footer li { margin-bottom: .6rem; }
@@ -697,7 +714,7 @@ table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; fo
   padding-block: 1.4rem; border-top: 1px solid rgba(255, 255, 255, .08);
   display: flex; flex-wrap: wrap; gap: .6rem 1.4rem;
   align-items: center; justify-content: space-between;
-  font-size: .85rem; color: #6c7794;
+  font-size: .85rem; color: #7b85a6;
 }
 
 /* --------------------------------------------------------------------------

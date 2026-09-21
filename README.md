@@ -1,7 +1,12 @@
 # King Mobile + Laptop Experts — website
 
-Marketing site for **King Mobile + Laptop Experts**, a phone, tablet and laptop repair shop at
-308 Rideau St, Unit A, Ottawa, ON K1N 5Y4 · (613) 206-6060.
+Marketing site for **King Mobile + Laptop Experts**, a buy-and-sell shop for
+phones, tablets and laptops at 308 Rideau St, Unit A, Ottawa, ON K1N 5Y4 ·
+(613) 206-6060.
+
+The shop buys devices from the public for cash, sells tested pre-owned stock
+with a warranty, and takes trade-ins. **It does not sell repairs**, and the
+site carries no repair content.
 
 Static HTML, CSS and vanilla JavaScript. No build step, no framework, no npm
 install — the files you edit are the files that ship.
@@ -15,7 +20,7 @@ Work through this list first.
 
 | # | What | Where | Why it matters |
 |---|------|-------|----------------|
-| 1 | **Repair prices** | `services.html` (all `$` figures) and the `card-price` spans in `index.html` | These are illustrative numbers, **not yours**. Publishing them unchanged means customers arrive expecting a price you never set. |
+| 1 | **Payout figures** | The two tables in `sell.html` (`#payout`) | These are illustrative numbers, **not yours**. Publishing them unchanged means sellers arrive expecting a payout you never offered. Delete the section entirely if you'd rather quote only by phone. |
 | 2 | **Opening hours** | Three places, see [Opening hours](#opening-hours) below | Wrong hours send people to a closed shop and hurt your Google ranking. |
 | 3 | **Domain name** | Every `https://kingmobileexperts.ca` in all 6 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
 | 4 | **Google Ads conversion labels** | `CONVERSIONS` in `assets/js/gtag.js` | The tag is live but records **nothing** until you paste the labels. See [Google Ads tracking](#google-ads-tracking). |
@@ -121,9 +126,9 @@ python3 -m http.server 8000   # note: use /services.html paths with this one
 ## Structure
 
 ```
-├── index.html          Home
-├── services.html       Repairs + full price list  (/services)
-├── buy-sell.html       Buy, sell & trade          (/buy-sell)
+├── index.html          Home — buy, sell & trade
+├── sell.html           Sell to us: what we buy, payouts, trade-in (/sell)
+├── buy.html            Buy from us: stock, 40-point check, warranty (/buy)
 ├── contact.html        Contact, hours, directions (/contact)
 ├── privacy.html        Privacy & cookies notice     (/privacy)
 ├── 404.html            Not-found page (Vercel serves this automatically)
@@ -150,7 +155,7 @@ six** — `index.html`, `services.html`, `buy-sell.html`, `contact.html`,
 Most visitors arrive on a phone, often a damaged one, on mobile data. So:
 
 - **Sticky call bar** pinned to the bottom of every page under 992px — the
-  highest-converting element on a local-services site.
+  highest-converting element on a local shop's site.
 - **Click-to-call everywhere.** Every phone number is a `tel:` link, and they
   all point at the same number so Google reads one consistent NAP.
 - **One conversion path — the phone.** No forms to fill on a device that may
@@ -212,7 +217,7 @@ Google Ads receives nothing.
 
 | Action | When it fires |
 |---|---|
-| `call` | Any `tel:` link is tapped — header, hero card, sticky bar, CTAs. Tagged with whether it came from the sticky bar or the page body. |
+| `call` | Any `tel:` link is tapped — header, hero card, sticky bar, CTAs. Tagged with whether it came from the sticky bar or the page body. This is the valuation enquiry, so it's the conversion that matters. |
 | `directions` | Any Google Maps directions link is clicked. |
 
 ### Enhanced conversions — on, but with nothing to feed it
@@ -223,7 +228,7 @@ tested. **But enhanced conversions works by hashing first-party customer data
 there is currently no such data to send.** The feature is wired and dormant.
 
 It starts paying off the moment you add somewhere a customer types their
-details (a booking form, a repair-status lookup, an email capture). At that
+details (a valuation form, a reservation request, an email capture). At that
 point, call this before the conversion fires:
 
 ```js
@@ -280,7 +285,7 @@ terms require you to disclose that you share data with Google and to have the
 right consents**, so don't delete that section while the feature is on.
 
 That page accurately describes what this website's code does. It deliberately
-says nothing about how you handle repair records, ID scans or customer details
+says nothing about how you handle purchase records, ID scans or customer details
 *in the shop* — only you know that. Add a section covering it, and have the
 page reviewed by someone qualified before relying on it. It is a starting
 point, not legal advice.
@@ -303,6 +308,14 @@ Profile. For the same reason there are **no hard-coded testimonials** — the
 reviews section links to your real Google reviews, and `index.html` contains a
 commented-out template if you want to feature genuine quotes later.
 
+The two pages are split deliberately: someone searching *"sell my iPhone
+Ottawa"* and someone searching *"used phones Ottawa"* want completely
+different things, so they get separate pages, titles and descriptions rather
+than one page trying to rank for both.
+
+Old repair URLs (`/services`, `/buy-sell`) 301-redirect to `/sell` in
+`vercel.json`, so anything already pointing at them doesn't dead-end.
+
 Biggest remaining win: claim and complete your **Google Business Profile**, and
 make sure the name, address and phone match this site character-for-character.
 For a shop like this, that profile drives more calls than the website will.
@@ -313,5 +326,11 @@ For a shop like this, that profile drives more calls than the website will.
 
 Skip link, landmark elements, `aria-current` on the
 active nav item, `aria-expanded` on the menu toggle, visible focus rings,
-keyboard-operable everything, `prefers-reduced-motion` respected, and text that
-meets WCAG AA contrast on both the light and dark sections.
+keyboard-operable everything, and `prefers-reduced-motion` respected.
+
+Contrast is checked with a script that walks every text node on every page,
+resolves the real painted backdrop (including gradients and alpha tints) and
+compares against WCAG AA. All visible text passes. Note the two gold tokens:
+`--gold-deep` is for icons and fills, `--gold-text` (darker) is for text on
+light backgrounds — `--gold-deep` only reaches ~2.7:1 as small text, so don't
+use it for copy.
