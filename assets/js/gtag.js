@@ -7,17 +7,20 @@
    Policy in vercel.json can stay at script-src 'self' — no 'unsafe-inline'
    and no fragile CSP hash to keep in sync when you edit this.
 
-   ── WHAT YOU MUST FILL IN ────────────────────────────────────────────────
-   The tag below is live, but a conversion is only recorded once you paste
-   the matching CONVERSION LABEL from Google Ads. Create the conversion
+   ── CONVERSION LABELS ────────────────────────────────────────────────────
+   A conversion is only recorded once the matching CONVERSION LABEL from
+   Google Ads is pasted into CONVERSIONS below. Create the conversion
    action first (Google Ads → Goals → Conversions → New conversion action →
    Website), then copy its "send_to" value, which looks like:
 
        AW-17829939467/AbCdEfGhIjKlMnOpQrS
 
-   and paste it into CONVERSIONS below, replacing REPLACE_WITH_…
-   Until then clicks are still pushed to the dataLayer, but nothing is
-   reported to Google Ads.
+   and paste it in, replacing REPLACE_WITH…  Until then clicks are still
+   pushed to the dataLayer, but nothing is reported to Google Ads.
+
+   "call" is wired to the live "Contact" conversion action — calling is the
+   only contact path on this site, so a tap on a phone number is the
+   Contact conversion.
    ========================================================================== */
 (function () {
   "use strict";
@@ -27,11 +30,20 @@
      ------------------------------------------------------------------ */
   var ADS_ID = "AW-17829939467";
 
+  /* Each entry is the Google Ads "send_to" value, plus the value and
+     currency the conversion action was set up with, if any. */
   var CONVERSIONS = {
-    // Someone tapped a phone number. This is the primary conversion.
-    call:       "AW-17829939467/REPLACE_WITH_CALL_LABEL",
+    // Someone tapped a phone number. This is the primary conversion, and
+    // it reports against the "Contact" conversion action.
+    call: {
+      label: "AW-17829939467/r5-6CNOoqoEdEIuS_bVC",
+      value: 1.0,
+      currency: "CAD"
+    },
     // Someone asked for directions — a strong intent-to-visit signal.
-    directions: "AW-17829939467/REPLACE_WITH_DIRECTIONS_LABEL"
+    directions: {
+      label: "AW-17829939467/REPLACE_WITH_DIRECTIONS_LABEL"
+    }
   };
 
   /* Call reporting (optional — OFF by default).
@@ -130,7 +142,8 @@
   var warned = {};
 
   function conversion(key, params) {
-    var label = CONVERSIONS[key];
+    var action = CONVERSIONS[key] || {};
+    var label = action.label;
 
     // Always leave a dataLayer trace, configured or not — it makes the
     // click visible in Tag Assistant while you're still setting labels up.
@@ -146,6 +159,8 @@
     }
 
     var payload = { send_to: label, transport_type: "beacon" };
+    if (typeof action.value === "number") payload.value = action.value;
+    if (action.currency) payload.currency = action.currency;
     for (var k in params) {
       if (Object.prototype.hasOwnProperty.call(params, k)) payload[k] = params[k];
     }
