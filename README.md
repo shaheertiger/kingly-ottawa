@@ -330,7 +330,27 @@ keyboard-operable everything, and `prefers-reduced-motion` respected.
 
 Contrast is checked with a script that walks every text node on every page,
 resolves the real painted backdrop (including gradients and alpha tints) and
-compares against WCAG AA. All visible text passes. Note the two gold tokens:
-`--gold-deep` is for icons and fills, `--gold-text` (darker) is for text on
-light backgrounds — `--gold-deep` only reaches ~2.7:1 as small text, so don't
-use it for copy.
+compares against WCAG AA. All visible text passes.
+
+Two rules keep it that way, both in `assets/css/styles.css`:
+
+- `--red` (`#e02424`) is the fill behind white text — buttons, the top bar,
+  the CTA band. It clears AA at 4.72:1. A pure `#ec2424` lands at 4.33:1 and
+  fails, so don't lighten this token.
+- `--red-text` (`#c51b1b`) is for red *text* and small icons on white
+  (5.1:1). `--red` itself only reaches 4.1:1 as small copy, so don't use it
+  for body text.
+
+## Look and feel
+
+The site is deliberately a white-and-red retail storefront, in the register
+of a modern Canadian phone shop: white page, one signal red carrying every
+call to action, near-black text, two soft greys for section banding, pill
+buttons, circular icon chips and a charcoal footer. There are no dark "tech"
+panels — contrast comes from red on white.
+
+Everything is driven by the tokens in section 1 of `assets/css/styles.css`.
+Two class names are historical and no longer describe what they do:
+`.section--ink` is now the darker of the two light greys, and `.btn--red`
+is simply the primary button. They are kept because they appear across every
+page.
