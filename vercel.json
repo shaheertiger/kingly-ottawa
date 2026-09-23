@@ -22,6 +22,11 @@
       "source": "/buy-sell.html",
       "destination": "/sell",
       "permanent": true
+    },
+    {
+      "source": "/laptop",
+      "destination": "/laptops",
+      "permanent": true
     }
   ],
   "headers": [

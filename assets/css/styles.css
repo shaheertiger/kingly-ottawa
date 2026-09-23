@@ -679,7 +679,8 @@ table.hours tr.is-today th::after { content: " • Today"; font-size: .74rem; fo
   background: radial-gradient(circle, rgba(255, 255, 255, .12), transparent 65%);
 }
 .cta-band h2 { color: var(--white); }
-.cta-band p { font-size: var(--fs-lead); color: rgba(255, 255, 255, .92); max-width: 40rem; margin-inline: auto; }
+/* Solid white, not translucent: at 92% the copy fell to 4.17:1 on --red, under AA. */
+.cta-band p { font-size: var(--fs-lead); color: var(--white); max-width: 40rem; margin-inline: auto; }
 /* The red button would vanish into a red band, so the primary flips to white. */
 .cta-band .btn--red { background: var(--white); color: var(--red-text); box-shadow: var(--sh-2); }
 .cta-band .btn--red:hover { background: var(--paper); color: var(--red-deep); }
