@@ -22,11 +22,11 @@ Work through this list first.
 |---|------|-------|----------------|
 | 1 | **Payout figures** | The two tables in `sell.html` (`#payout`) | These are illustrative numbers, **not yours**. Publishing them unchanged means sellers arrive expecting a payout you never offered. Delete the section entirely if you'd rather quote only by phone. |
 | 2 | **Opening hours** | Three places, see [Opening hours](#opening-hours) below | Wrong hours send people to a closed shop and hurt your Google ranking. |
-| 3 | **Domain name** | Every `https://kingmobileexperts.ca` in all 6 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
+| 3 | **Domain name** | Every `https://kingmobileexperts.ca` in all 7 pages, plus `robots.txt` and `sitemap.xml` | Canonical tags and social previews break on the wrong domain. |
 | 4 | **Google Ads conversion labels** | `CONVERSIONS` in `assets/js/gtag.js` | The tag is live but records **nothing** until you paste the labels. See [Google Ads tracking](#google-ads-tracking). |
-| 5 | **Google review links** | `index.html`, the two links in the `#reviews` section | Currently a Maps *search*; swap for your Business Profile's direct review URL. |
+| 5 | **Google review links** | `index.html` and `laptops.html`, the two links in each `#reviews` section | Currently a Maps *search*; swap for your Business Profile's direct review URL. |
 | 6 | **Map coordinates** | `geo` block in `index.html` JSON-LD, `geo.position` in `contact.html` | Approximate (45.4287, −75.6857). Verify against your real pin. |
-| 7 | **Warranty claims** | "90 days", "no fix no fee", "we beat written quotes" | These appear across the site as commitments. Keep only what you actually offer. |
+| 7 | **Shop promises** | "90-day warranty", "40-point check", "wiped in front of you" | These appear across the site, `/laptops` included, as commitments. Keep only what you actually offer. |
 
 ### Quick find-and-replace
 
@@ -50,7 +50,7 @@ the structured data and your visitors trust the table — so they'll conflict.
    "Open now / Closed" badge and today's-row highlight. Times are 24-hour
    `"HH:MM"` in Ottawa local time; use `null` for a day you're closed.
 2. **The visible tables** → `<table class="hours">` in `index.html`,
-   `contact.html`, and the footer of every page.
+   `laptops.html`, `contact.html`, and the footer of every page.
 3. **The structured data** → `openingHoursSpecification` in the JSON-LD block
    in `index.html`.
 
@@ -129,12 +129,13 @@ python3 -m http.server 8000   # note: use /services.html paths with this one
 ├── index.html          Home — buy, sell & trade
 ├── sell.html           Sell to us: what we buy, payouts, trade-in (/sell)
 ├── buy.html            Buy from us: stock, 40-point check, warranty (/buy)
+├── laptops.html        Laptops: sell, buy & trade, laid out like home (/laptops)
 ├── contact.html        Contact, hours, directions (/contact)
 ├── privacy.html        Privacy & cookies notice     (/privacy)
 ├── 404.html            Not-found page (Vercel serves this automatically)
 ├── vercel.json         Routing, caching, security headers
 ├── robots.txt          Crawler rules + sitemap pointer
-├── sitemap.xml         The four indexable URLs
+├── sitemap.xml         The six indexable URLs
 ├── site.webmanifest    Add-to-home-screen metadata
 ├── favicon.ico/.svg    Browser tab icons
 └── assets/
@@ -143,10 +144,10 @@ python3 -m http.server 8000   # note: use /services.html paths with this one
     └── img/            Crown logo, app icons, social share card
 ```
 
-Header and footer markup is duplicated across the five pages (the cost of
+Header and footer markup is duplicated across every page (the cost of
 having no build step). **If you change the nav or footer, change it in all
-six** — `index.html`, `services.html`, `buy-sell.html`, `contact.html`,
-`privacy.html`, `404.html`.
+seven** — `index.html`, `sell.html`, `buy.html`, `laptops.html`,
+`contact.html`, `privacy.html`, `404.html`.
 
 ---
 
@@ -296,8 +297,10 @@ Already in place:
 
 - `LocalBusiness` (`MobilePhoneStore`) structured data with address, phone,
   geo, hours, service catalogue and area served.
-- `FAQPage` structured data mirroring the visible FAQ word-for-word (Google
-  requires the match).
+- `FAQPage` structured data on the home page and `/laptops`, each mirroring
+  its visible FAQ word-for-word (Google requires the match). Keep the two
+  sets of questions different: Google wants each question marked up only
+  once per site.
 - `BreadcrumbList` on every interior page, canonical URLs, Open Graph and
   Twitter cards, `sitemap.xml` and `robots.txt`.
 
@@ -312,6 +315,10 @@ The two pages are split deliberately: someone searching *"sell my iPhone
 Ottawa"* and someone searching *"used phones Ottawa"* want completely
 different things, so they get separate pages, titles and descriptions rather
 than one page trying to rank for both.
+
+`/laptops` does the same job for laptop searches (*"sell my MacBook Ottawa"*,
+*"used laptops Ottawa"*). It follows the home page's layout with laptop-only
+copy, and `/laptop` 301-redirects to it in `vercel.json`.
 
 Old repair URLs (`/services`, `/buy-sell`) 301-redirect to `/sell` in
 `vercel.json`, so anything already pointing at them doesn't dead-end.
